@@ -1,0 +1,26 @@
+{
+	"id": "tallyccu-pro",
+	"name": "TallyCCU Pro",
+	"shortname": "TallyCCU",
+	"description": "Blackmagic camera control via TallyCCU Pro with vMix tally integration",
+	"version": "3.0.0",
+	"license": "MIT",
+	"repository": "git+https://github.com/fiverecords/companion-module-tallyccu-pro.git",
+	"bugs": "https://github.com/fiverecords/companion-module-tallyccu-pro/issues",
+	"maintainers": [
+		{
+			"name": "Joaquin Villodre",
+			"email": "fiverecords@gmail.com"
+		}
+	],
+	"runtime": {
+		"type": "node22",
+		"api": "nodejs-ipc",
+		"apiVersion": "0.0.0",
+		"entrypoint": "../main.js"
+	},
+	"legacyIds": [],
+	"manufacturer": "Fiverecords",
+	"products": ["TallyCCU Pro"],
+	"keywords": ["camera", "blackmagic", "ccu", "tally", "vmix", "sdi"]
+}
