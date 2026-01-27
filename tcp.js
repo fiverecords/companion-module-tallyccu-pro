@@ -114,6 +114,13 @@ module.exports = {
 	processTcpMessage(self, message) {
 		self.log('debug', `TCP rx: ${message}`)
 
+		// REQUESTSYNC - Send all cached state back to Arduino
+		if (message === 'REQUESTSYNC') {
+			self.log('info', 'Received REQUESTSYNC, sending cached state')
+			this.sendCachedState(self)
+			return
+		}
+
 		if (message.startsWith('CCU ')) {
 			const parts = message.substring(4).split(' ')
 			if (parts.length >= 3) {
@@ -207,5 +214,36 @@ module.exports = {
 
 		self.setVariableValues(variables)
 		self.log('debug', `Variable updated: cam${cameraId}_preset${presetId}_name = "${presetName}"`)
+	},
+
+	// Send all cached camera state back to Arduino for SSE sync
+	sendCachedState(self) {
+		if (!self.tcpSocket || !self.tcpConnected) {
+			self.log('warn', 'Cannot send cached state - TCP not connected')
+			return
+		}
+
+		let paramCount = 0
+		for (let cameraId = 1; cameraId <= 8; cameraId++) {
+			const state = self.cameraStates[cameraId]
+			if (!state) continue
+
+			for (const paramKey in state) {
+				const value = state[paramKey]
+				let valueStr
+				if (Array.isArray(value)) {
+					valueStr = value.join(',')
+				} else {
+					valueStr = String(value)
+				}
+				
+				// Send as CCU message back to Arduino
+				const msg = `CCUSYNC ${cameraId} ${paramKey} ${valueStr}\r\n`
+				self.tcpSocket.write(msg)
+				paramCount++
+			}
+		}
+		
+		self.log('info', `Sent ${paramCount} cached parameters to Arduino`)
 	},
 }
