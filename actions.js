@@ -35,7 +35,7 @@ module.exports = function (self) {
         };
         // Action to increment Aperture (normalised)
         actions['set_aperture_normalised_increment'] = {
-            name: '⬆️ Increase Aperture (normalised)',
+            name: 'â¬†ï¸Â Increase Aperture (normalised)',
             description: 'Increase the value of Aperture (normalised)',
             options: [
                 {
@@ -75,7 +75,7 @@ module.exports = function (self) {
         };
         // Action to decrement Aperture (normalised)
         actions['set_aperture_normalised_decrement'] = {
-            name: '⬇️ Decrease Aperture (normalised)',
+            name: 'â¬‡ï¸Â Decrease Aperture (normalised)',
             description: 'Decrease the value of Aperture (normalised)',
             options: [
                 {
@@ -115,7 +115,7 @@ module.exports = function (self) {
         };
         // Action to reset Aperture (normalised) al default value
         actions['set_aperture_normalised_reset'] = {
-            name: '🔄 Reset Aperture (normalised)',
+            name: 'ðŸ”„ Reset Aperture (normalised)',
             description: 'Reset to default value (0.00)',
             options: [
                 {
@@ -212,7 +212,7 @@ module.exports = function (self) {
         };
         // Action to increment Focus
         actions['set_focus_increment'] = {
-            name: '⬆️ Increase Focus',
+            name: 'â¬†ï¸Â Increase Focus',
             description: 'Increase the value of Focus',
             options: [
                 {
@@ -252,7 +252,7 @@ module.exports = function (self) {
         };
         // Action to decrement Focus
         actions['set_focus_decrement'] = {
-            name: '⬇️ Decrease Focus',
+            name: 'â¬‡ï¸Â Decrease Focus',
             description: 'Decrease the value of Focus',
             options: [
                 {
@@ -292,7 +292,7 @@ module.exports = function (self) {
         };
         // Action to reset Focus al default value
         actions['set_focus_reset'] = {
-            name: '🔄 Reset Focus',
+            name: 'ðŸ”„ Reset Focus',
             description: 'Reset to default value (0.00)',
             options: [
                 {
@@ -363,7 +363,7 @@ module.exports = function (self) {
         };
         // Action to increment Set absolute zoom (normalised)
         actions['set_set_absolute_zoom_normalised_increment'] = {
-            name: '⬆️ Increase Set absolute zoom (normalised)',
+            name: 'â¬†ï¸Â Increase Set absolute zoom (normalised)',
             description: 'Increase the value of Set absolute zoom (normalised)',
             options: [
                 {
@@ -403,7 +403,7 @@ module.exports = function (self) {
         };
         // Action to decrement Set absolute zoom (normalised)
         actions['set_set_absolute_zoom_normalised_decrement'] = {
-            name: '⬇️ Decrease Set absolute zoom (normalised)',
+            name: 'â¬‡ï¸Â Decrease Set absolute zoom (normalised)',
             description: 'Decrease the value of Set absolute zoom (normalised)',
             options: [
                 {
@@ -443,7 +443,7 @@ module.exports = function (self) {
         };
         // Action to reset Set absolute zoom (normalised) al default value
         actions['set_set_absolute_zoom_normalised_reset'] = {
-            name: '🔄 Reset Set absolute zoom (normalised)',
+            name: 'ðŸ”„ Reset Set absolute zoom (normalised)',
             description: 'Reset to default value (0.00)',
             options: [
                 {
@@ -575,7 +575,7 @@ module.exports = function (self) {
         // Action to set only ND Filter Stop: Filter power as f-stop
         actions['set_nd_filter_stop_0'] = {
             name: 'Set ND Filter Stop: Filter power as f-stop',
-            description: 'Set value for ND Filter Stop: Filter power as f-stop',
+            description: 'Set value for ND Filter Stop: Filter power as f-stop (0, 2, 4, 6)',
             options: [
                 {
                     type: 'number',
@@ -586,25 +586,26 @@ module.exports = function (self) {
                     max: 8
                 },
                 {
-                    type: 'number',
-                    label: 'Value',
+                    type: 'dropdown',
+                    label: 'ND Stop',
                     id: 'value',
-                    default: 0.0,
-                    min: 0.0,
-                    max: 15.0,
-                    step: 0.1
+                    default: 0,
+                    choices: [
+                        { id: 0, label: 'Clear (0)' },
+                        { id: 2, label: 'ND 0.6 (2 stops)' },
+                        { id: 4, label: 'ND 1.2 (4 stops)' },
+                        { id: 6, label: 'ND 1.8 (6 stops)' }
+                    ]
                 }
             ],
             callback: async (event) => {
                 const cameraId = event.options.cameraId;
-                const newValue = event.options.value;
+                const newValue = parseInt(event.options.value);
                 
                 // Get current values or use SPECIFIC defaults
                 const values = [];
-                // For the subindex being modified, use the new value
                 values[0] = newValue;
-                // For other subindexes, get current value or use their specific default
-                values[1] = self.getParamValue('nd_filter_stop_1', 0.0, cameraId);
+                values[1] = self.getParamValue('nd_filter_stop_1', 0, cameraId);
                 
                 // Store new value specifically for this camera
                 self.storeParamValue('nd_filter_stop_0', newValue, cameraId);
@@ -614,10 +615,10 @@ module.exports = function (self) {
                 self.sendParam(cameraId, 'nd_filter_stop', valuesString);
             }
         };
-        // Action to increment ND Filter Stop: Filter power as f-stop
+        // Action to increment ND Filter Stop: Filter power as f-stop (steps of 2)
         actions['set_nd_filter_stop_0_increment'] = {
-            name: '⬆️ Increase ND Filter Stop: Filter power as f-stop',
-            description: 'Increase the value of ND Filter Stop: Filter power as f-stop',
+            name: '⬆️ Increase ND Filter Stop: Filter power as f-stop',
+            description: 'Increase ND filter by 2 stops (0 → 2 → 4 → 6)',
             options: [
                 {
                     type: 'number',
@@ -626,33 +627,23 @@ module.exports = function (self) {
                     default: self.config.defaultCameraId || 1,
                     min: 1,
                     max: 8
-                },
-                {
-                    type: 'number',
-                    label: 'Increment',
-                    id: 'increment',
-                    default: 0.1,
-                    min: 0.1,
-                    max: 15.0,
-                    step: 0.1
                 }
             ],
             callback: async (event) => {
                 const cameraId = event.options.cameraId;
-                const increment = event.options.increment;
                 
                 // Get current value or use default for this camera
-                let currentValue = self.getParamValue('nd_filter_stop_0', 0.0, cameraId);
+                let currentValue = self.getParamValue('nd_filter_stop_0', 0, cameraId);
                 
-                // Calcular nuevo valor
-                let newValue = Math.min(15.0, currentValue + increment);
+                // Increment by 2, max 6
+                let newValue = Math.min(6, currentValue + 2);
                 
-                // Get current values for other subindexes with their specific defaults
+                // Get current values for other subindexes
                 const values = [];
-                // For the subindex being modified, use the new value incrementado
                 values[0] = newValue;
-                // For other subindexes, get current value or use their specific default
-                values[1] = self.getParamValue('nd_filter_stop_1', 0.0, cameraId);
+                values[1] = self.getParamValue('nd_filter_stop_1', 0, cameraId);
+                
+                self.log('info', `ND Filter: ${currentValue} → ${newValue} stops`);
                 
                 // Store new value specifically for this camera
                 self.storeParamValue('nd_filter_stop_0', newValue, cameraId);
@@ -662,10 +653,10 @@ module.exports = function (self) {
                 self.sendParam(cameraId, 'nd_filter_stop', valuesString);
             }
         };
-        // Action to decrement ND Filter Stop: Filter power as f-stop
+        // Action to decrement ND Filter Stop: Filter power as f-stop (steps of 2)
         actions['set_nd_filter_stop_0_decrement'] = {
-            name: '⬇️ Decrease ND Filter Stop: Filter power as f-stop',
-            description: 'Decrease the value of ND Filter Stop: Filter power as f-stop',
+            name: '⬇️ Decrease ND Filter Stop: Filter power as f-stop',
+            description: 'Decrease ND filter by 2 stops (6 → 4 → 2 → 0)',
             options: [
                 {
                     type: 'number',
@@ -674,33 +665,23 @@ module.exports = function (self) {
                     default: self.config.defaultCameraId || 1,
                     min: 1,
                     max: 8
-                },
-                {
-                    type: 'number',
-                    label: 'Decrement',
-                    id: 'decrement',
-                    default: 0.1,
-                    min: 0.1,
-                    max: 15.0,
-                    step: 0.1
                 }
             ],
             callback: async (event) => {
                 const cameraId = event.options.cameraId;
-                const decrement = event.options.decrement;
                 
                 // Get current value or use default for this camera
-                let currentValue = self.getParamValue('nd_filter_stop_0', 0.0, cameraId);
+                let currentValue = self.getParamValue('nd_filter_stop_0', 0, cameraId);
                 
-                // Calcular nuevo valor
-                let newValue = Math.max(0.0, currentValue - decrement);
+                // Decrement by 2, min 0
+                let newValue = Math.max(0, currentValue - 2);
                 
-                // Get current values for other subindexes with their specific defaults
+                // Get current values for other subindexes
                 const values = [];
-                // For the subindex being modified, use the new value decrementado
                 values[0] = newValue;
-                // For other subindexes, get current value or use their specific default
-                values[1] = self.getParamValue('nd_filter_stop_1', 0.0, cameraId);
+                values[1] = self.getParamValue('nd_filter_stop_1', 0, cameraId);
+                
+                self.log('info', `ND Filter: ${currentValue} → ${newValue} stops`);
                 
                 // Store new value specifically for this camera
                 self.storeParamValue('nd_filter_stop_0', newValue, cameraId);
@@ -710,10 +691,10 @@ module.exports = function (self) {
                 self.sendParam(cameraId, 'nd_filter_stop', valuesString);
             }
         };
-        // Action to reset ND Filter Stop: Filter power as f-stop al default value
+        // Action to reset ND Filter Stop: Filter power as f-stop (Clear)
         actions['set_nd_filter_stop_0_reset'] = {
             name: '🔄 Reset ND Filter Stop: Filter power as f-stop',
-            description: 'Reset to default value (0.00)',
+            description: 'Reset to Clear (0 stops)',
             options: [
                 {
                     type: 'number',
@@ -726,14 +707,12 @@ module.exports = function (self) {
             ],
             callback: async (event) => {
                 const cameraId = event.options.cameraId;
-                const resetValue = 0.0;
+                const resetValue = 0;
                 
-                // Get current values for other subindexes with their specific defaults
+                // Get current values for other subindexes
                 const values = [];
-                // For the subindex being reset, use its default value
                 values[0] = resetValue;
-                // For other subindexes, get current value or use their specific default
-                values[1] = self.getParamValue('nd_filter_stop_1', 0.0, cameraId);
+                values[1] = self.getParamValue('nd_filter_stop_1', 0, cameraId);
                 
                 // Store default value specifically for this camera
                 self.storeParamValue('nd_filter_stop_0', resetValue, cameraId);
@@ -787,7 +766,7 @@ module.exports = function (self) {
         };
         // Action to increment ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance
         actions['set_nd_filter_stop_1_increment'] = {
-            name: '⬆️ Increase ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance',
+            name: 'â¬†ï¸Â Increase ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance',
             description: 'Increase the value of ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance',
             options: [
                 {
@@ -835,7 +814,7 @@ module.exports = function (self) {
         };
         // Action to decrement ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance
         actions['set_nd_filter_stop_1_decrement'] = {
-            name: '⬇️ Decrease ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance',
+            name: 'â¬‡ï¸Â Decrease ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance',
             description: 'Decrease the value of ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance',
             options: [
                 {
@@ -883,7 +862,7 @@ module.exports = function (self) {
         };
         // Action to reset ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance al default value
         actions['set_nd_filter_stop_1_reset'] = {
-            name: '🔄 Reset ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance',
+            name: 'ðŸ”„ Reset ND Filter Stop: 0 = Stop, 1 = Density, 2 = Transmitance',
             description: 'Reset to default value (0.00)',
             options: [
                 {
@@ -942,10 +921,19 @@ module.exports = function (self) {
                 self.sendParam(cameraId, 'shutter_speed', event.options.value);
             }
         };
-        // Action to increment Shutter speed
+        // Helper function to get current frame rate for a camera
+        function getFrameRateForCamera(cameraId) {
+            const videoModeKey = `cam${cameraId}_video_mode_0`;
+            let fps = self.paramValues[videoModeKey];
+            if (!fps || fps <= 0) {
+                fps = 60; // Default fallback
+            }
+            return parseInt(fps);
+        }
+        // Action to increment Shutter speed (by frame rate multiples)
         actions['set_shutter_speed_increment'] = {
-            name: '⬆️ Increase Shutter speed',
-            description: 'Increase the value of Shutter speed',
+            name: '⬆️ Increase Shutter speed',
+            description: 'Increase shutter to next frame rate multiple (1x → 2x → 4x → 8x fps)',
             options: [
                 {
                     type: 'number',
@@ -954,38 +942,40 @@ module.exports = function (self) {
                     default: self.config.defaultCameraId || 1,
                     min: 1,
                     max: 8
-                },
-                {
-                    type: 'number',
-                    label: 'Increment',
-                    id: 'increment',
-                    default: 1,
-                    min: 1,
-                    max: 1976.0,
-                    step: 1
                 }
             ],
             callback: async (event) => {
                 const cameraId = event.options.cameraId;
-                const increment = event.options.increment;
+                const fps = getFrameRateForCamera(cameraId);
                 
-                // Get current value or use default for this camera
-                let currentValue = self.getParamValue('shutter_speed', 24.0, cameraId);
+                // Get current shutter value
+                let currentValue = self.getParamValue('shutter_speed', fps, cameraId);
                 
-                // Calcular nuevo valor
-                let newValue = Math.min(2000.0, currentValue + increment);
+                // Calculate current multiplier and go to next
+                let currentMultiplier = Math.round(currentValue / fps);
+                if (currentMultiplier < 1) currentMultiplier = 1;
                 
-                // Send new value
+                // Next multiplier: 1 → 2 → 4 → 8 → 16 → 32
+                let nextMultiplier;
+                if (currentMultiplier < 2) nextMultiplier = 2;
+                else if (currentMultiplier < 4) nextMultiplier = 4;
+                else if (currentMultiplier < 8) nextMultiplier = 8;
+                else if (currentMultiplier < 16) nextMultiplier = 16;
+                else if (currentMultiplier < 32) nextMultiplier = 32;
+                else nextMultiplier = currentMultiplier; // Max reached
+                
+                let newValue = Math.min(2000, fps * nextMultiplier);
+                
+                self.log('info', `Shutter: ${currentValue} → ${newValue} (${nextMultiplier}x ${fps}fps)`);
+                
                 self.sendParam(cameraId, 'shutter_speed', newValue);
-                
-                // Store new value specifically for this camera
                 self.storeParamValue('shutter_speed', newValue, cameraId);
             }
         };
-        // Action to decrement Shutter speed
+        // Action to decrement Shutter speed (by frame rate multiples)
         actions['set_shutter_speed_decrement'] = {
-            name: '⬇️ Decrease Shutter speed',
-            description: 'Decrease the value of Shutter speed',
+            name: '⬇️ Decrease Shutter speed',
+            description: 'Decrease shutter to previous frame rate multiple (32x → 16x → 8x → 4x → 2x → 1x fps)',
             options: [
                 {
                     type: 'number',
@@ -994,38 +984,38 @@ module.exports = function (self) {
                     default: self.config.defaultCameraId || 1,
                     min: 1,
                     max: 8
-                },
-                {
-                    type: 'number',
-                    label: 'Decrement',
-                    id: 'decrement',
-                    default: 1,
-                    min: 1,
-                    max: 1976.0,
-                    step: 1
                 }
             ],
             callback: async (event) => {
                 const cameraId = event.options.cameraId;
-                const decrement = event.options.decrement;
+                const fps = getFrameRateForCamera(cameraId);
                 
-                // Get current value or use default for this camera
-                let currentValue = self.getParamValue('shutter_speed', 24.0, cameraId);
+                // Get current shutter value
+                let currentValue = self.getParamValue('shutter_speed', fps, cameraId);
                 
-                // Calcular nuevo valor
-                let newValue = Math.max(24.0, currentValue - decrement);
+                // Calculate current multiplier and go to previous
+                let currentMultiplier = Math.round(currentValue / fps);
                 
-                // Send new value
+                // Previous multiplier: 32 → 16 → 8 → 4 → 2 → 1
+                let prevMultiplier;
+                if (currentMultiplier > 16) prevMultiplier = 16;
+                else if (currentMultiplier > 8) prevMultiplier = 8;
+                else if (currentMultiplier > 4) prevMultiplier = 4;
+                else if (currentMultiplier > 2) prevMultiplier = 2;
+                else prevMultiplier = 1; // Min is 1x fps
+                
+                let newValue = fps * prevMultiplier;
+                
+                self.log('info', `Shutter: ${currentValue} → ${newValue} (${prevMultiplier}x ${fps}fps)`);
+                
                 self.sendParam(cameraId, 'shutter_speed', newValue);
-                
-                // Store new value specifically for this camera
                 self.storeParamValue('shutter_speed', newValue, cameraId);
             }
         };
-        // Action to reset Shutter speed al default value
+        // Action to reset Shutter speed to frame rate (1x fps = 180° shutter)
         actions['set_shutter_speed_reset'] = {
             name: '🔄 Reset Shutter speed',
-            description: 'Reset to default value (24)',
+            description: 'Reset to frame rate (1/fps = 180° shutter angle)',
             options: [
                 {
                     type: 'number',
@@ -1038,12 +1028,12 @@ module.exports = function (self) {
             ],
             callback: async (event) => {
                 const cameraId = event.options.cameraId;
+                const fps = getFrameRateForCamera(cameraId);
                 
-                // Send default value
-                self.sendParam(cameraId, 'shutter_speed', 24.0);
+                self.log('info', `Shutter reset to 1/${fps} (frame rate) for camera ${cameraId}`);
                 
-                // Store default value for this specific camera
-                self.storeParamValue('shutter_speed', 24.0, cameraId);
+                self.sendParam(cameraId, 'shutter_speed', fps);
+                self.storeParamValue('shutter_speed', fps, cameraId);
             }
         };
         // Action for Gain(db) (numeric)
@@ -1076,7 +1066,7 @@ module.exports = function (self) {
         };
         // Action to increment Gain(db)
         actions['set_gain_db_increment'] = {
-            name: '⬆️ Increase Gain(db)',
+            name: 'â¬†ï¸Â Increase Gain(db)',
             description: 'Increase the value of Gain(db)',
             options: [
                 {
@@ -1116,7 +1106,7 @@ module.exports = function (self) {
         };
         // Action to decrement Gain(db)
         actions['set_gain_db_decrement'] = {
-            name: '⬇️ Decrease Gain(db)',
+            name: 'â¬‡ï¸Â Decrease Gain(db)',
             description: 'Decrease the value of Gain(db)',
             options: [
                 {
@@ -1156,7 +1146,7 @@ module.exports = function (self) {
         };
         // Action to reset Gain(db) al default value
         actions['set_gain_db_reset'] = {
-            name: '🔄 Reset Gain(db)',
+            name: 'ðŸ”„ Reset Gain(db)',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -1268,7 +1258,7 @@ module.exports = function (self) {
         };
         // Action to increment Manual White Balance: Color temp (2500-10000 K)
         actions['set_manual_white_balance_0_increment'] = {
-            name: '⬆️ Increase Manual White Balance: Color temp (2500-10000 K)',
+            name: 'â¬†ï¸Â Increase Manual White Balance: Color temp (2500-10000 K)',
             description: 'Increase the value of Manual White Balance: Color temp (2500-10000 K)',
             options: [
                 {
@@ -1316,7 +1306,7 @@ module.exports = function (self) {
         };
         // Action to decrement Manual White Balance: Color temp (2500-10000 K)
         actions['set_manual_white_balance_0_decrement'] = {
-            name: '⬇️ Decrease Manual White Balance: Color temp (2500-10000 K)',
+            name: 'â¬‡ï¸Â Decrease Manual White Balance: Color temp (2500-10000 K)',
             description: 'Decrease the value of Manual White Balance: Color temp (2500-10000 K)',
             options: [
                 {
@@ -1364,7 +1354,7 @@ module.exports = function (self) {
         };
         // Action to reset Manual White Balance: Color temp (2500-10000 K) al default value
         actions['set_manual_white_balance_0_reset'] = {
-            name: '🔄 Reset Manual White Balance: Color temp (2500-10000 K)',
+            name: 'ðŸ”„ Reset Manual White Balance: Color temp (2500-10000 K)',
             description: 'Reset to default value (5600)',
             options: [
                 {
@@ -1439,7 +1429,7 @@ module.exports = function (self) {
         };
         // Action to increment Manual White Balance: Tint (-50 to 50)
         actions['set_manual_white_balance_1_increment'] = {
-            name: '⬆️ Increase Manual White Balance: Tint (-50 to 50)',
+            name: 'â¬†ï¸Â Increase Manual White Balance: Tint (-50 to 50)',
             description: 'Increase the value of Manual White Balance: Tint (-50 to 50)',
             options: [
                 {
@@ -1487,7 +1477,7 @@ module.exports = function (self) {
         };
         // Action to decrement Manual White Balance: Tint (-50 to 50)
         actions['set_manual_white_balance_1_decrement'] = {
-            name: '⬇️ Decrease Manual White Balance: Tint (-50 to 50)',
+            name: 'â¬‡ï¸Â Decrease Manual White Balance: Tint (-50 to 50)',
             description: 'Decrease the value of Manual White Balance: Tint (-50 to 50)',
             options: [
                 {
@@ -1535,7 +1525,7 @@ module.exports = function (self) {
         };
         // Action to reset Manual White Balance: Tint (-50 to 50) al default value
         actions['set_manual_white_balance_1_reset'] = {
-            name: '🔄 Reset Manual White Balance: Tint (-50 to 50)',
+            name: 'ðŸ”„ Reset Manual White Balance: Tint (-50 to 50)',
             description: 'Reset to default value (10)',
             options: [
                 {
@@ -1634,7 +1624,7 @@ module.exports = function (self) {
         };
         // Action to increment Dynamic Range Mode
         actions['set_dynamic_range_mode_increment'] = {
-            name: '⬆️ Increase Dynamic Range Mode',
+            name: 'â¬†ï¸Â Increase Dynamic Range Mode',
             description: 'Increase the value of Dynamic Range Mode',
             options: [
                 {
@@ -1674,7 +1664,7 @@ module.exports = function (self) {
         };
         // Action to decrement Dynamic Range Mode
         actions['set_dynamic_range_mode_decrement'] = {
-            name: '⬇️ Decrease Dynamic Range Mode',
+            name: 'â¬‡ï¸Â Decrease Dynamic Range Mode',
             description: 'Decrease the value of Dynamic Range Mode',
             options: [
                 {
@@ -1714,7 +1704,7 @@ module.exports = function (self) {
         };
         // Action to reset Dynamic Range Mode al default value
         actions['set_dynamic_range_mode_reset'] = {
-            name: '🔄 Reset Dynamic Range Mode',
+            name: 'ðŸ”„ Reset Dynamic Range Mode',
             description: 'Reset to default value (2)',
             options: [
                 {
@@ -1766,7 +1756,7 @@ module.exports = function (self) {
         };
         // Action to increment Video sharpening level
         actions['set_video_sharpening_level_increment'] = {
-            name: '⬆️ Increase Video sharpening level',
+            name: 'â¬†ï¸Â Increase Video sharpening level',
             description: 'Increase the value of Video sharpening level',
             options: [
                 {
@@ -1806,7 +1796,7 @@ module.exports = function (self) {
         };
         // Action to decrement Video sharpening level
         actions['set_video_sharpening_level_decrement'] = {
-            name: '⬇️ Decrease Video sharpening level',
+            name: 'â¬‡ï¸Â Decrease Video sharpening level',
             description: 'Decrease the value of Video sharpening level',
             options: [
                 {
@@ -1846,7 +1836,7 @@ module.exports = function (self) {
         };
         // Action to reset Video sharpening level al default value
         actions['set_video_sharpening_level_reset'] = {
-            name: '🔄 Reset Video sharpening level',
+            name: 'ðŸ”„ Reset Video sharpening level',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -1898,7 +1888,7 @@ module.exports = function (self) {
         };
         // Action to increment Set auto exposure mode
         actions['set_set_auto_exposure_mode_increment'] = {
-            name: '⬆️ Increase Set auto exposure mode',
+            name: 'â¬†ï¸Â Increase Set auto exposure mode',
             description: 'Increase the value of Set auto exposure mode',
             options: [
                 {
@@ -1938,7 +1928,7 @@ module.exports = function (self) {
         };
         // Action to decrement Set auto exposure mode
         actions['set_set_auto_exposure_mode_decrement'] = {
-            name: '⬇️ Decrease Set auto exposure mode',
+            name: 'â¬‡ï¸Â Decrease Set auto exposure mode',
             description: 'Decrease the value of Set auto exposure mode',
             options: [
                 {
@@ -1978,7 +1968,7 @@ module.exports = function (self) {
         };
         // Action to reset Set auto exposure mode al default value
         actions['set_set_auto_exposure_mode_reset'] = {
-            name: '🔄 Reset Set auto exposure mode',
+            name: 'ðŸ”„ Reset Set auto exposure mode',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -2129,7 +2119,7 @@ module.exports = function (self) {
         };
         // Action to increment Video mode: Frame rate (24, 25, 30, 50, 60)
         actions['set_video_mode_0_increment'] = {
-            name: '⬆️ Increase Video mode: Frame rate (24, 25, 30, 50, 60)',
+            name: 'â¬†ï¸Â Increase Video mode: Frame rate (24, 25, 30, 50, 60)',
             description: 'Increase the value of Video mode: Frame rate (24, 25, 30, 50, 60)',
             options: [
                 {
@@ -2183,7 +2173,7 @@ module.exports = function (self) {
         };
         // Action to decrement Video mode: Frame rate (24, 25, 30, 50, 60)
         actions['set_video_mode_0_decrement'] = {
-            name: '⬇️ Decrease Video mode: Frame rate (24, 25, 30, 50, 60)',
+            name: 'â¬‡ï¸Â Decrease Video mode: Frame rate (24, 25, 30, 50, 60)',
             description: 'Decrease the value of Video mode: Frame rate (24, 25, 30, 50, 60)',
             options: [
                 {
@@ -2237,7 +2227,7 @@ module.exports = function (self) {
         };
         // Action to reset Video mode: Frame rate (24, 25, 30, 50, 60) al default value
         actions['set_video_mode_0_reset'] = {
-            name: '🔄 Reset Video mode: Frame rate (24, 25, 30, 50, 60)',
+            name: 'ðŸ”„ Reset Video mode: Frame rate (24, 25, 30, 50, 60)',
             description: 'Reset to default value (60)',
             options: [
                 {
@@ -2324,7 +2314,7 @@ module.exports = function (self) {
         };
         // Action to increment Video mode: M-rate (0 = regular, 1 = M-rate)
         actions['set_video_mode_1_increment'] = {
-            name: '⬆️ Increase Video mode: M-rate (0 = regular, 1 = M-rate)',
+            name: 'â¬†ï¸Â Increase Video mode: M-rate (0 = regular, 1 = M-rate)',
             description: 'Increase the value of Video mode: M-rate (0 = regular, 1 = M-rate)',
             options: [
                 {
@@ -2378,7 +2368,7 @@ module.exports = function (self) {
         };
         // Action to decrement Video mode: M-rate (0 = regular, 1 = M-rate)
         actions['set_video_mode_1_decrement'] = {
-            name: '⬇️ Decrease Video mode: M-rate (0 = regular, 1 = M-rate)',
+            name: 'â¬‡ï¸Â Decrease Video mode: M-rate (0 = regular, 1 = M-rate)',
             description: 'Decrease the value of Video mode: M-rate (0 = regular, 1 = M-rate)',
             options: [
                 {
@@ -2432,7 +2422,7 @@ module.exports = function (self) {
         };
         // Action to reset Video mode: M-rate (0 = regular, 1 = M-rate) al default value
         actions['set_video_mode_1_reset'] = {
-            name: '🔄 Reset Video mode: M-rate (0 = regular, 1 = M-rate)',
+            name: 'ðŸ”„ Reset Video mode: M-rate (0 = regular, 1 = M-rate)',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -2519,7 +2509,7 @@ module.exports = function (self) {
         };
         // Action to increment Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k)
         actions['set_video_mode_2_increment'] = {
-            name: '⬆️ Increase Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k)',
+            name: 'â¬†ï¸Â Increase Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k)',
             description: 'Increase the value of Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k)',
             options: [
                 {
@@ -2573,7 +2563,7 @@ module.exports = function (self) {
         };
         // Action to decrement Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k)
         actions['set_video_mode_2_decrement'] = {
-            name: '⬇️ Decrease Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k)',
+            name: 'â¬‡ï¸Â Decrease Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k)',
             description: 'Decrease the value of Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k)',
             options: [
                 {
@@ -2627,7 +2617,7 @@ module.exports = function (self) {
         };
         // Action to reset Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k) al default value
         actions['set_video_mode_2_reset'] = {
-            name: '🔄 Reset Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k)',
+            name: 'ðŸ”„ Reset Video mode: Dimensions (0 = NTSC, 1 = PAL, 2 = 720, 3 = 1080, 4 = 2kDCI, 5 = 2k16:9, 6 = UHD, 7 = 3k Anamorphic, 8 = 4k DCI, 9 = 4k 16:9, 10 = 4.6k 2.4:1, 11 = 4.6k)',
             description: 'Reset to default value (6)',
             options: [
                 {
@@ -2714,7 +2704,7 @@ module.exports = function (self) {
         };
         // Action to increment Video mode: Interlaced (0 = progressive, 1 = interlaced)
         actions['set_video_mode_3_increment'] = {
-            name: '⬆️ Increase Video mode: Interlaced (0 = progressive, 1 = interlaced)',
+            name: 'â¬†ï¸Â Increase Video mode: Interlaced (0 = progressive, 1 = interlaced)',
             description: 'Increase the value of Video mode: Interlaced (0 = progressive, 1 = interlaced)',
             options: [
                 {
@@ -2768,7 +2758,7 @@ module.exports = function (self) {
         };
         // Action to decrement Video mode: Interlaced (0 = progressive, 1 = interlaced)
         actions['set_video_mode_3_decrement'] = {
-            name: '⬇️ Decrease Video mode: Interlaced (0 = progressive, 1 = interlaced)',
+            name: 'â¬‡ï¸Â Decrease Video mode: Interlaced (0 = progressive, 1 = interlaced)',
             description: 'Decrease the value of Video mode: Interlaced (0 = progressive, 1 = interlaced)',
             options: [
                 {
@@ -2822,7 +2812,7 @@ module.exports = function (self) {
         };
         // Action to reset Video mode: Interlaced (0 = progressive, 1 = interlaced) al default value
         actions['set_video_mode_3_reset'] = {
-            name: '🔄 Reset Video mode: Interlaced (0 = progressive, 1 = interlaced)',
+            name: 'ðŸ”„ Reset Video mode: Interlaced (0 = progressive, 1 = interlaced)',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -2909,7 +2899,7 @@ module.exports = function (self) {
         };
         // Action to increment Video mode: Color space (0 = YUV)
         actions['set_video_mode_4_increment'] = {
-            name: '⬆️ Increase Video mode: Color space (0 = YUV)',
+            name: 'â¬†ï¸Â Increase Video mode: Color space (0 = YUV)',
             description: 'Increase the value of Video mode: Color space (0 = YUV)',
             options: [
                 {
@@ -2963,7 +2953,7 @@ module.exports = function (self) {
         };
         // Action to decrement Video mode: Color space (0 = YUV)
         actions['set_video_mode_4_decrement'] = {
-            name: '⬇️ Decrease Video mode: Color space (0 = YUV)',
+            name: 'â¬‡ï¸Â Decrease Video mode: Color space (0 = YUV)',
             description: 'Decrease the value of Video mode: Color space (0 = YUV)',
             options: [
                 {
@@ -3017,7 +3007,7 @@ module.exports = function (self) {
         };
         // Action to reset Video mode: Color space (0 = YUV) al default value
         actions['set_video_mode_4_reset'] = {
-            name: '🔄 Reset Video mode: Color space (0 = YUV)',
+            name: 'ðŸ”„ Reset Video mode: Color space (0 = YUV)',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -3144,7 +3134,7 @@ module.exports = function (self) {
         };
         // Action to increment Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video)
         actions['set_display_lut_0_increment'] = {
-            name: '⬆️ Increase Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video)',
+            name: 'â¬†ï¸Â Increase Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video)',
             description: 'Increase the value of Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video)',
             options: [
                 {
@@ -3192,7 +3182,7 @@ module.exports = function (self) {
         };
         // Action to decrement Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video)
         actions['set_display_lut_0_decrement'] = {
-            name: '⬇️ Decrease Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video)',
+            name: 'â¬‡ï¸Â Decrease Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video)',
             description: 'Decrease the value of Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video)',
             options: [
                 {
@@ -3240,7 +3230,7 @@ module.exports = function (self) {
         };
         // Action to reset Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video) al default value
         actions['set_display_lut_0_reset'] = {
-            name: '🔄 Reset Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video)',
+            name: 'ðŸ”„ Reset Display LUT: Selected LUT (0 = None, 1 = Custom, 2 = Film to Video, 3 = Film to Extended Video)',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -3315,7 +3305,7 @@ module.exports = function (self) {
         };
         // Action to increment Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled)
         actions['set_display_lut_1_increment'] = {
-            name: '⬆️ Increase Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled)',
+            name: 'â¬†ï¸Â Increase Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled)',
             description: 'Increase the value of Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled)',
             options: [
                 {
@@ -3363,7 +3353,7 @@ module.exports = function (self) {
         };
         // Action to decrement Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled)
         actions['set_display_lut_1_decrement'] = {
-            name: '⬇️ Decrease Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled)',
+            name: 'â¬‡ï¸Â Decrease Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled)',
             description: 'Decrease the value of Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled)',
             options: [
                 {
@@ -3411,7 +3401,7 @@ module.exports = function (self) {
         };
         // Action to reset Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled) al default value
         actions['set_display_lut_1_reset'] = {
-            name: '🔄 Reset Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled)',
+            name: 'ðŸ”„ Reset Display LUT: LUT Enabled (0 = Not enabled, 1 = Enabled)',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -3472,7 +3462,7 @@ module.exports = function (self) {
         };
         // Action to increment Mic level
         actions['set_mic_level_increment'] = {
-            name: '⬆️ Increase Mic level',
+            name: 'â¬†ï¸Â Increase Mic level',
             description: 'Increase the value of Mic level',
             options: [
                 {
@@ -3512,7 +3502,7 @@ module.exports = function (self) {
         };
         // Action to decrement Mic level
         actions['set_mic_level_decrement'] = {
-            name: '⬇️ Decrease Mic level',
+            name: 'â¬‡ï¸Â Decrease Mic level',
             description: 'Decrease the value of Mic level',
             options: [
                 {
@@ -3552,7 +3542,7 @@ module.exports = function (self) {
         };
         // Action to reset Mic level al default value
         actions['set_mic_level_reset'] = {
-            name: '🔄 Reset Mic level',
+            name: 'ðŸ”„ Reset Mic level',
             description: 'Reset to default value (0.70)',
             options: [
                 {
@@ -3604,7 +3594,7 @@ module.exports = function (self) {
         };
         // Action to increment Headphone level
         actions['set_headphone_level_increment'] = {
-            name: '⬆️ Increase Headphone level',
+            name: 'â¬†ï¸Â Increase Headphone level',
             description: 'Increase the value of Headphone level',
             options: [
                 {
@@ -3644,7 +3634,7 @@ module.exports = function (self) {
         };
         // Action to decrement Headphone level
         actions['set_headphone_level_decrement'] = {
-            name: '⬇️ Decrease Headphone level',
+            name: 'â¬‡ï¸Â Decrease Headphone level',
             description: 'Decrease the value of Headphone level',
             options: [
                 {
@@ -3684,7 +3674,7 @@ module.exports = function (self) {
         };
         // Action to reset Headphone level al default value
         actions['set_headphone_level_reset'] = {
-            name: '🔄 Reset Headphone level',
+            name: 'ðŸ”„ Reset Headphone level',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -3736,7 +3726,7 @@ module.exports = function (self) {
         };
         // Action to increment Headphone program mix
         actions['set_headphone_program_mix_increment'] = {
-            name: '⬆️ Increase Headphone program mix',
+            name: 'â¬†ï¸Â Increase Headphone program mix',
             description: 'Increase the value of Headphone program mix',
             options: [
                 {
@@ -3776,7 +3766,7 @@ module.exports = function (self) {
         };
         // Action to decrement Headphone program mix
         actions['set_headphone_program_mix_decrement'] = {
-            name: '⬇️ Decrease Headphone program mix',
+            name: 'â¬‡ï¸Â Decrease Headphone program mix',
             description: 'Decrease the value of Headphone program mix',
             options: [
                 {
@@ -3816,7 +3806,7 @@ module.exports = function (self) {
         };
         // Action to reset Headphone program mix al default value
         actions['set_headphone_program_mix_reset'] = {
-            name: '🔄 Reset Headphone program mix',
+            name: 'ðŸ”„ Reset Headphone program mix',
             description: 'Reset to default value (0.00)',
             options: [
                 {
@@ -3868,7 +3858,7 @@ module.exports = function (self) {
         };
         // Action to increment Speaker level
         actions['set_speaker_level_increment'] = {
-            name: '⬆️ Increase Speaker level',
+            name: 'â¬†ï¸Â Increase Speaker level',
             description: 'Increase the value of Speaker level',
             options: [
                 {
@@ -3908,7 +3898,7 @@ module.exports = function (self) {
         };
         // Action to decrement Speaker level
         actions['set_speaker_level_decrement'] = {
-            name: '⬇️ Decrease Speaker level',
+            name: 'â¬‡ï¸Â Decrease Speaker level',
             description: 'Decrease the value of Speaker level',
             options: [
                 {
@@ -3948,7 +3938,7 @@ module.exports = function (self) {
         };
         // Action to reset Speaker level al default value
         actions['set_speaker_level_reset'] = {
-            name: '🔄 Reset Speaker level',
+            name: 'ðŸ”„ Reset Speaker level',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -4000,7 +3990,7 @@ module.exports = function (self) {
         };
         // Action to increment Input type
         actions['set_input_type_increment'] = {
-            name: '⬆️ Increase Input type',
+            name: 'â¬†ï¸Â Increase Input type',
             description: 'Increase the value of Input type',
             options: [
                 {
@@ -4040,7 +4030,7 @@ module.exports = function (self) {
         };
         // Action to decrement Input type
         actions['set_input_type_decrement'] = {
-            name: '⬇️ Decrease Input type',
+            name: 'â¬‡ï¸Â Decrease Input type',
             description: 'Decrease the value of Input type',
             options: [
                 {
@@ -4080,7 +4070,7 @@ module.exports = function (self) {
         };
         // Action to reset Input type al default value
         actions['set_input_type_reset'] = {
-            name: '🔄 Reset Input type',
+            name: 'ðŸ”„ Reset Input type',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -4192,7 +4182,7 @@ module.exports = function (self) {
         };
         // Action to increment Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum
         actions['set_input_levels_0_increment'] = {
-            name: '⬆️ Increase Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum',
+            name: 'â¬†ï¸Â Increase Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum',
             description: 'Increase the value of Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum',
             options: [
                 {
@@ -4240,7 +4230,7 @@ module.exports = function (self) {
         };
         // Action to decrement Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum
         actions['set_input_levels_0_decrement'] = {
-            name: '⬇️ Decrease Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum',
+            name: 'â¬‡ï¸Â Decrease Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum',
             description: 'Decrease the value of Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum',
             options: [
                 {
@@ -4288,7 +4278,7 @@ module.exports = function (self) {
         };
         // Action to reset Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum al default value
         actions['set_input_levels_0_reset'] = {
-            name: '🔄 Reset Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum',
+            name: 'ðŸ”„ Reset Input levels: Ch1 = 0.0 Minimum, 1.0 Maximum',
             description: 'Reset to default value (0.50)',
             options: [
                 {
@@ -4363,7 +4353,7 @@ module.exports = function (self) {
         };
         // Action to increment Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum
         actions['set_input_levels_1_increment'] = {
-            name: '⬆️ Increase Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum',
+            name: 'â¬†ï¸Â Increase Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum',
             description: 'Increase the value of Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum',
             options: [
                 {
@@ -4411,7 +4401,7 @@ module.exports = function (self) {
         };
         // Action to decrement Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum
         actions['set_input_levels_1_decrement'] = {
-            name: '⬇️ Decrease Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum',
+            name: 'â¬‡ï¸Â Decrease Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum',
             description: 'Decrease the value of Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum',
             options: [
                 {
@@ -4459,7 +4449,7 @@ module.exports = function (self) {
         };
         // Action to reset Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum al default value
         actions['set_input_levels_1_reset'] = {
-            name: '🔄 Reset Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum',
+            name: 'ðŸ”„ Reset Input levels: Ch2 = 0.0 Minimum, 1.0 Maximum',
             description: 'Reset to default value (0.50)',
             options: [
                 {
@@ -4632,7 +4622,7 @@ module.exports = function (self) {
         };
         // Action to increment Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1)
         actions['set_overlays_0_increment'] = {
-            name: '⬆️ Increase Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1)',
+            name: 'â¬†ï¸Â Increase Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1)',
             description: 'Increase the value of Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1)',
             options: [
                 {
@@ -4684,7 +4674,7 @@ module.exports = function (self) {
         };
         // Action to decrement Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1)
         actions['set_overlays_0_decrement'] = {
-            name: '⬇️ Decrease Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1)',
+            name: 'â¬‡ï¸Â Decrease Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1)',
             description: 'Decrease the value of Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1)',
             options: [
                 {
@@ -4736,7 +4726,7 @@ module.exports = function (self) {
         };
         // Action to reset Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1) al default value
         actions['set_overlays_0_reset'] = {
-            name: '🔄 Reset Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1)',
+            name: 'ðŸ”„ Reset Overlays: Frame guides style (0 = Off, 1 = 2.4:1, 2 = 2.39:1, 3 = 2.35:1, 4 = 1.85:1, 5 = 16:9, 6 = 14:9, 7 = 4:3, 8 = 2:1, 9 = 4:5, 10 = 1:1)',
             description: 'Reset to default value (5)',
             options: [
                 {
@@ -4819,7 +4809,7 @@ module.exports = function (self) {
         };
         // Action to increment Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque)
         actions['set_overlays_1_increment'] = {
-            name: '⬆️ Increase Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque)',
+            name: 'â¬†ï¸Â Increase Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque)',
             description: 'Increase the value of Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque)',
             options: [
                 {
@@ -4871,7 +4861,7 @@ module.exports = function (self) {
         };
         // Action to decrement Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque)
         actions['set_overlays_1_decrement'] = {
-            name: '⬇️ Decrease Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque)',
+            name: 'â¬‡ï¸Â Decrease Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque)',
             description: 'Decrease the value of Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque)',
             options: [
                 {
@@ -4923,7 +4913,7 @@ module.exports = function (self) {
         };
         // Action to reset Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque) al default value
         actions['set_overlays_1_reset'] = {
-            name: '🔄 Reset Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque)',
+            name: 'ðŸ”„ Reset Overlays: Frame Guide Opacity (0 = Transparent, 100 = Opaque)',
             description: 'Reset to default value (100)',
             options: [
                 {
@@ -5006,7 +4996,7 @@ module.exports = function (self) {
         };
         // Action to increment Overlays: Safe Area Percentage (0 means off)
         actions['set_overlays_2_increment'] = {
-            name: '⬆️ Increase Overlays: Safe Area Percentage (0 means off)',
+            name: 'â¬†ï¸Â Increase Overlays: Safe Area Percentage (0 means off)',
             description: 'Increase the value of Overlays: Safe Area Percentage (0 means off)',
             options: [
                 {
@@ -5058,7 +5048,7 @@ module.exports = function (self) {
         };
         // Action to decrement Overlays: Safe Area Percentage (0 means off)
         actions['set_overlays_2_decrement'] = {
-            name: '⬇️ Decrease Overlays: Safe Area Percentage (0 means off)',
+            name: 'â¬‡ï¸Â Decrease Overlays: Safe Area Percentage (0 means off)',
             description: 'Decrease the value of Overlays: Safe Area Percentage (0 means off)',
             options: [
                 {
@@ -5110,7 +5100,7 @@ module.exports = function (self) {
         };
         // Action to reset Overlays: Safe Area Percentage (0 means off) al default value
         actions['set_overlays_2_reset'] = {
-            name: '🔄 Reset Overlays: Safe Area Percentage (0 means off)',
+            name: 'ðŸ”„ Reset Overlays: Safe Area Percentage (0 means off)',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -5193,7 +5183,7 @@ module.exports = function (self) {
         };
         // Action to increment Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon)
         actions['set_overlays_3_increment'] = {
-            name: '⬆️ Increase Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon)',
+            name: 'â¬†ï¸Â Increase Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon)',
             description: 'Increase the value of Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon)',
             options: [
                 {
@@ -5245,7 +5235,7 @@ module.exports = function (self) {
         };
         // Action to decrement Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon)
         actions['set_overlays_3_decrement'] = {
-            name: '⬇️ Decrease Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon)',
+            name: 'â¬‡ï¸Â Decrease Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon)',
             description: 'Decrease the value of Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon)',
             options: [
                 {
@@ -5297,7 +5287,7 @@ module.exports = function (self) {
         };
         // Action to reset Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon) al default value
         actions['set_overlays_3_reset'] = {
-            name: '🔄 Reset Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon)',
+            name: 'ðŸ”„ Reset Overlays: Grid style bit flags (1 = Thirds, 2 = Cross Hairs, 4 = Center Dot, 8 = Horizon)',
             description: 'Reset to default value (9)',
             options: [
                 {
@@ -5362,7 +5352,7 @@ module.exports = function (self) {
         };
         // Action to increment Brightness
         actions['set_brightness_increment'] = {
-            name: '⬆️ Increase Brightness',
+            name: 'â¬†ï¸Â Increase Brightness',
             description: 'Increase the value of Brightness',
             options: [
                 {
@@ -5402,7 +5392,7 @@ module.exports = function (self) {
         };
         // Action to decrement Brightness
         actions['set_brightness_decrement'] = {
-            name: '⬇️ Decrease Brightness',
+            name: 'â¬‡ï¸Â Decrease Brightness',
             description: 'Decrease the value of Brightness',
             options: [
                 {
@@ -5442,7 +5432,7 @@ module.exports = function (self) {
         };
         // Action to reset Brightness al default value
         actions['set_brightness_reset'] = {
-            name: '🔄 Reset Brightness',
+            name: 'ðŸ”„ Reset Brightness',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -5534,7 +5524,7 @@ module.exports = function (self) {
         };
         // Action to increment Zebra level
         actions['set_zebra_level_increment'] = {
-            name: '⬆️ Increase Zebra level',
+            name: 'â¬†ï¸Â Increase Zebra level',
             description: 'Increase the value of Zebra level',
             options: [
                 {
@@ -5574,7 +5564,7 @@ module.exports = function (self) {
         };
         // Action to decrement Zebra level
         actions['set_zebra_level_decrement'] = {
-            name: '⬇️ Decrease Zebra level',
+            name: 'â¬‡ï¸Â Decrease Zebra level',
             description: 'Decrease the value of Zebra level',
             options: [
                 {
@@ -5614,7 +5604,7 @@ module.exports = function (self) {
         };
         // Action to reset Zebra level al default value
         actions['set_zebra_level_reset'] = {
-            name: '🔄 Reset Zebra level',
+            name: 'ðŸ”„ Reset Zebra level',
             description: 'Reset to default value (0.50)',
             options: [
                 {
@@ -5666,7 +5656,7 @@ module.exports = function (self) {
         };
         // Action to increment Peaking level
         actions['set_peaking_level_increment'] = {
-            name: '⬆️ Increase Peaking level',
+            name: 'â¬†ï¸Â Increase Peaking level',
             description: 'Increase the value of Peaking level',
             options: [
                 {
@@ -5706,7 +5696,7 @@ module.exports = function (self) {
         };
         // Action to decrement Peaking level
         actions['set_peaking_level_decrement'] = {
-            name: '⬇️ Decrease Peaking level',
+            name: 'â¬‡ï¸Â Decrease Peaking level',
             description: 'Decrease the value of Peaking level',
             options: [
                 {
@@ -5746,7 +5736,7 @@ module.exports = function (self) {
         };
         // Action to reset Peaking level al default value
         actions['set_peaking_level_reset'] = {
-            name: '🔄 Reset Peaking level',
+            name: 'ðŸ”„ Reset Peaking level',
             description: 'Reset to default value (0.90)',
             options: [
                 {
@@ -5798,7 +5788,7 @@ module.exports = function (self) {
         };
         // Action to increment Color bars display time (seconds)
         actions['set_color_bars_display_time_seconds_increment'] = {
-            name: '⬆️ Increase Color bars display time (seconds)',
+            name: 'â¬†ï¸Â Increase Color bars display time (seconds)',
             description: 'Increase the value of Color bars display time (seconds)',
             options: [
                 {
@@ -5838,7 +5828,7 @@ module.exports = function (self) {
         };
         // Action to decrement Color bars display time (seconds)
         actions['set_color_bars_display_time_seconds_decrement'] = {
-            name: '⬇️ Decrease Color bars display time (seconds)',
+            name: 'â¬‡ï¸Â Decrease Color bars display time (seconds)',
             description: 'Decrease the value of Color bars display time (seconds)',
             options: [
                 {
@@ -5878,7 +5868,7 @@ module.exports = function (self) {
         };
         // Action to reset Color bars display time (seconds) al default value
         actions['set_color_bars_display_time_seconds_reset'] = {
-            name: '🔄 Reset Color bars display time (seconds)',
+            name: 'ðŸ”„ Reset Color bars display time (seconds)',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -5990,7 +5980,7 @@ module.exports = function (self) {
         };
         // Action to increment Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines)
         actions['set_focus_assist_0_increment'] = {
-            name: '⬆️ Increase Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines)',
+            name: 'â¬†ï¸Â Increase Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines)',
             description: 'Increase the value of Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines)',
             options: [
                 {
@@ -6038,7 +6028,7 @@ module.exports = function (self) {
         };
         // Action to decrement Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines)
         actions['set_focus_assist_0_decrement'] = {
-            name: '⬇️ Decrease Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines)',
+            name: 'â¬‡ï¸Â Decrease Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines)',
             description: 'Decrease the value of Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines)',
             options: [
                 {
@@ -6086,7 +6076,7 @@ module.exports = function (self) {
         };
         // Action to reset Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines) al default value
         actions['set_focus_assist_0_reset'] = {
-            name: '🔄 Reset Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines)',
+            name: 'ðŸ”„ Reset Focus Assist: Focus Assist Method (0 = Peak, 1 = Colored lines)',
             description: 'Reset to default value (1)',
             options: [
                 {
@@ -6161,7 +6151,7 @@ module.exports = function (self) {
         };
         // Action to increment Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black)
         actions['set_focus_assist_1_increment'] = {
-            name: '⬆️ Increase Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black)',
+            name: 'â¬†ï¸Â Increase Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black)',
             description: 'Increase the value of Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black)',
             options: [
                 {
@@ -6209,7 +6199,7 @@ module.exports = function (self) {
         };
         // Action to decrement Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black)
         actions['set_focus_assist_1_decrement'] = {
-            name: '⬇️ Decrease Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black)',
+            name: 'â¬‡ï¸Â Decrease Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black)',
             description: 'Decrease the value of Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black)',
             options: [
                 {
@@ -6257,7 +6247,7 @@ module.exports = function (self) {
         };
         // Action to reset Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black) al default value
         actions['set_focus_assist_1_reset'] = {
-            name: '🔄 Reset Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black)',
+            name: 'ðŸ”„ Reset Focus Assist: Focus Line Color (0 = Red, 1 = Green, 2 = Blue, 3 = White, 4 = Black)',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -6318,7 +6308,7 @@ module.exports = function (self) {
         };
         // Action to increment Program return feed enable
         actions['set_program_return_feed_enable_increment'] = {
-            name: '⬆️ Increase Program return feed enable',
+            name: 'â¬†ï¸Â Increase Program return feed enable',
             description: 'Increase the value of Program return feed enable',
             options: [
                 {
@@ -6358,7 +6348,7 @@ module.exports = function (self) {
         };
         // Action to decrement Program return feed enable
         actions['set_program_return_feed_enable_decrement'] = {
-            name: '⬇️ Decrease Program return feed enable',
+            name: 'â¬‡ï¸Â Decrease Program return feed enable',
             description: 'Decrease the value of Program return feed enable',
             options: [
                 {
@@ -6398,7 +6388,7 @@ module.exports = function (self) {
         };
         // Action to reset Program return feed enable al default value
         actions['set_program_return_feed_enable_reset'] = {
-            name: '🔄 Reset Program return feed enable',
+            name: 'ðŸ”„ Reset Program return feed enable',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -6450,7 +6440,7 @@ module.exports = function (self) {
         };
         // Action to increment Timecode Source [0]
         actions['set_timecode_source_0_increment'] = {
-            name: '⬆️ Increase Timecode Source [0]',
+            name: 'â¬†ï¸Â Increase Timecode Source [0]',
             description: 'Increase the value of Timecode Source [0]',
             options: [
                 {
@@ -6490,7 +6480,7 @@ module.exports = function (self) {
         };
         // Action to decrement Timecode Source [0]
         actions['set_timecode_source_0_decrement'] = {
-            name: '⬇️ Decrease Timecode Source [0]',
+            name: 'â¬‡ï¸Â Decrease Timecode Source [0]',
             description: 'Decrease the value of Timecode Source [0]',
             options: [
                 {
@@ -6530,7 +6520,7 @@ module.exports = function (self) {
         };
         // Action to reset Timecode Source [0] al default value
         actions['set_timecode_source_0_reset'] = {
-            name: '🔄 Reset Timecode Source [0]',
+            name: 'ðŸ”„ Reset Timecode Source [0]',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -6582,7 +6572,7 @@ module.exports = function (self) {
         };
         // Action to increment Tally brightness
         actions['set_tally_brightness_increment'] = {
-            name: '⬆️ Increase Tally brightness',
+            name: 'â¬†ï¸Â Increase Tally brightness',
             description: 'Increase the value of Tally brightness',
             options: [
                 {
@@ -6622,7 +6612,7 @@ module.exports = function (self) {
         };
         // Action to decrement Tally brightness
         actions['set_tally_brightness_decrement'] = {
-            name: '⬇️ Decrease Tally brightness',
+            name: 'â¬‡ï¸Â Decrease Tally brightness',
             description: 'Decrease the value of Tally brightness',
             options: [
                 {
@@ -6662,7 +6652,7 @@ module.exports = function (self) {
         };
         // Action to reset Tally brightness al default value
         actions['set_tally_brightness_reset'] = {
-            name: '🔄 Reset Tally brightness',
+            name: 'ðŸ”„ Reset Tally brightness',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -6714,7 +6704,7 @@ module.exports = function (self) {
         };
         // Action to increment Front tally brightness
         actions['set_front_tally_brightness_increment'] = {
-            name: '⬆️ Increase Front tally brightness',
+            name: 'â¬†ï¸Â Increase Front tally brightness',
             description: 'Increase the value of Front tally brightness',
             options: [
                 {
@@ -6754,7 +6744,7 @@ module.exports = function (self) {
         };
         // Action to decrement Front tally brightness
         actions['set_front_tally_brightness_decrement'] = {
-            name: '⬇️ Decrease Front tally brightness',
+            name: 'â¬‡ï¸Â Decrease Front tally brightness',
             description: 'Decrease the value of Front tally brightness',
             options: [
                 {
@@ -6794,7 +6784,7 @@ module.exports = function (self) {
         };
         // Action to reset Front tally brightness al default value
         actions['set_front_tally_brightness_reset'] = {
-            name: '🔄 Reset Front tally brightness',
+            name: 'ðŸ”„ Reset Front tally brightness',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -6846,7 +6836,7 @@ module.exports = function (self) {
         };
         // Action to increment Rear tally brightness
         actions['set_rear_tally_brightness_increment'] = {
-            name: '⬆️ Increase Rear tally brightness',
+            name: 'â¬†ï¸Â Increase Rear tally brightness',
             description: 'Increase the value of Rear tally brightness',
             options: [
                 {
@@ -6886,7 +6876,7 @@ module.exports = function (self) {
         };
         // Action to decrement Rear tally brightness
         actions['set_rear_tally_brightness_decrement'] = {
-            name: '⬇️ Decrease Rear tally brightness',
+            name: 'â¬‡ï¸Â Decrease Rear tally brightness',
             description: 'Decrease the value of Rear tally brightness',
             options: [
                 {
@@ -6926,7 +6916,7 @@ module.exports = function (self) {
         };
         // Action to reset Rear tally brightness al default value
         actions['set_rear_tally_brightness_reset'] = {
-            name: '🔄 Reset Rear tally brightness',
+            name: 'ðŸ”„ Reset Rear tally brightness',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -6978,7 +6968,7 @@ module.exports = function (self) {
         };
         // Action to increment Source
         actions['set_source_increment'] = {
-            name: '⬆️ Increase Source',
+            name: 'â¬†ï¸Â Increase Source',
             description: 'Increase the value of Source',
             options: [
                 {
@@ -7018,7 +7008,7 @@ module.exports = function (self) {
         };
         // Action to decrement Source
         actions['set_source_decrement'] = {
-            name: '⬇️ Decrease Source',
+            name: 'â¬‡ï¸Â Decrease Source',
             description: 'Decrease the value of Source',
             options: [
                 {
@@ -7058,7 +7048,7 @@ module.exports = function (self) {
         };
         // Action to reset Source al default value
         actions['set_source_reset'] = {
-            name: '🔄 Reset Source',
+            name: 'ðŸ”„ Reset Source',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -7110,7 +7100,7 @@ module.exports = function (self) {
         };
         // Action to increment Offset
         actions['set_offset_increment'] = {
-            name: '⬆️ Increase Offset',
+            name: 'â¬†ï¸Â Increase Offset',
             description: 'Increase the value of Offset',
             options: [
                 {
@@ -7150,7 +7140,7 @@ module.exports = function (self) {
         };
         // Action to decrement Offset
         actions['set_offset_decrement'] = {
-            name: '⬇️ Decrease Offset',
+            name: 'â¬‡ï¸Â Decrease Offset',
             description: 'Decrease the value of Offset',
             options: [
                 {
@@ -7190,7 +7180,7 @@ module.exports = function (self) {
         };
         // Action to reset Offset al default value
         actions['set_offset_reset'] = {
-            name: '🔄 Reset Offset',
+            name: 'ðŸ”„ Reset Offset',
             description: 'Reset to default value (0)',
             options: [
                 {
@@ -7302,7 +7292,7 @@ module.exports = function (self) {
         };
         // Action to increment Contrast Adjust: Pivot
         actions['set_contrast_adjust_0_increment'] = {
-            name: '⬆️ Increase Contrast Adjust: Pivot',
+            name: 'â¬†ï¸Â Increase Contrast Adjust: Pivot',
             description: 'Increase the value of Contrast Adjust: Pivot',
             options: [
                 {
@@ -7350,7 +7340,7 @@ module.exports = function (self) {
         };
         // Action to decrement Contrast Adjust: Pivot
         actions['set_contrast_adjust_0_decrement'] = {
-            name: '⬇️ Decrease Contrast Adjust: Pivot',
+            name: 'â¬‡ï¸Â Decrease Contrast Adjust: Pivot',
             description: 'Decrease the value of Contrast Adjust: Pivot',
             options: [
                 {
@@ -7398,7 +7388,7 @@ module.exports = function (self) {
         };
         // Action to reset Contrast Adjust: Pivot al default value
         actions['set_contrast_adjust_0_reset'] = {
-            name: '🔄 Reset Contrast Adjust: Pivot',
+            name: 'ðŸ”„ Reset Contrast Adjust: Pivot',
             description: 'Reset to default value (0.50)',
             options: [
                 {
@@ -7473,7 +7463,7 @@ module.exports = function (self) {
         };
         // Action to increment Contrast Adjust: Adjust
         actions['set_contrast_adjust_1_increment'] = {
-            name: '⬆️ Increase Contrast Adjust: Adjust',
+            name: 'â¬†ï¸Â Increase Contrast Adjust: Adjust',
             description: 'Increase the value of Contrast Adjust: Adjust',
             options: [
                 {
@@ -7521,7 +7511,7 @@ module.exports = function (self) {
         };
         // Action to decrement Contrast Adjust: Adjust
         actions['set_contrast_adjust_1_decrement'] = {
-            name: '⬇️ Decrease Contrast Adjust: Adjust',
+            name: 'â¬‡ï¸Â Decrease Contrast Adjust: Adjust',
             description: 'Decrease the value of Contrast Adjust: Adjust',
             options: [
                 {
@@ -7569,7 +7559,7 @@ module.exports = function (self) {
         };
         // Action to reset Contrast Adjust: Adjust al default value
         actions['set_contrast_adjust_1_reset'] = {
-            name: '🔄 Reset Contrast Adjust: Adjust',
+            name: 'ðŸ”„ Reset Contrast Adjust: Adjust',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -7690,7 +7680,7 @@ module.exports = function (self) {
         };
         // Action to increment Color Adjust: Hue
         actions['set_color_adjust_0_increment'] = {
-            name: '⬆️ Increase Color Adjust: Hue',
+            name: 'â¬†ï¸Â Increase Color Adjust: Hue',
             description: 'Increase the value of Color Adjust: Hue',
             options: [
                 {
@@ -7738,7 +7728,7 @@ module.exports = function (self) {
         };
         // Action to decrement Color Adjust: Hue
         actions['set_color_adjust_0_decrement'] = {
-            name: '⬇️ Decrease Color Adjust: Hue',
+            name: 'â¬‡ï¸Â Decrease Color Adjust: Hue',
             description: 'Decrease the value of Color Adjust: Hue',
             options: [
                 {
@@ -7786,7 +7776,7 @@ module.exports = function (self) {
         };
         // Action to reset Color Adjust: Hue al default value
         actions['set_color_adjust_0_reset'] = {
-            name: '🔄 Reset Color Adjust: Hue',
+            name: 'ðŸ”„ Reset Color Adjust: Hue',
             description: 'Reset to default value (-1.00)',
             options: [
                 {
@@ -7861,7 +7851,7 @@ module.exports = function (self) {
         };
         // Action to increment Color Adjust: Saturation
         actions['set_color_adjust_1_increment'] = {
-            name: '⬆️ Increase Color Adjust: Saturation',
+            name: 'â¬†ï¸Â Increase Color Adjust: Saturation',
             description: 'Increase the value of Color Adjust: Saturation',
             options: [
                 {
@@ -7909,7 +7899,7 @@ module.exports = function (self) {
         };
         // Action to decrement Color Adjust: Saturation
         actions['set_color_adjust_1_decrement'] = {
-            name: '⬇️ Decrease Color Adjust: Saturation',
+            name: 'â¬‡ï¸Â Decrease Color Adjust: Saturation',
             description: 'Decrease the value of Color Adjust: Saturation',
             options: [
                 {
@@ -7957,7 +7947,7 @@ module.exports = function (self) {
         };
         // Action to reset Color Adjust: Saturation al default value
         actions['set_color_adjust_1_reset'] = {
-            name: '🔄 Reset Color Adjust: Saturation',
+            name: 'ðŸ”„ Reset Color Adjust: Saturation',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -8104,7 +8094,7 @@ module.exports = function (self) {
         };
         // Action to increment Lift Adjust: Red
         actions['set_lift_adjust_0_increment'] = {
-            name: '⬆️ Increase Lift Adjust: Red',
+            name: 'â¬†ï¸Â Increase Lift Adjust: Red',
             description: 'Increase the value of Lift Adjust: Red',
             options: [
                 {
@@ -8156,7 +8146,7 @@ module.exports = function (self) {
         };
         // Action to decrement Lift Adjust: Red
         actions['set_lift_adjust_0_decrement'] = {
-            name: '⬇️ Decrease Lift Adjust: Red',
+            name: 'â¬‡ï¸Â Decrease Lift Adjust: Red',
             description: 'Decrease the value of Lift Adjust: Red',
             options: [
                 {
@@ -8208,7 +8198,7 @@ module.exports = function (self) {
         };
         // Action to reset Lift Adjust: Red al default value
         actions['set_lift_adjust_0_reset'] = {
-            name: '🔄 Reset Lift Adjust: Red',
+            name: 'ðŸ”„ Reset Lift Adjust: Red',
             description: 'Reset to default value (-2.00)',
             options: [
                 {
@@ -8291,7 +8281,7 @@ module.exports = function (self) {
         };
         // Action to increment Lift Adjust: Green
         actions['set_lift_adjust_1_increment'] = {
-            name: '⬆️ Increase Lift Adjust: Green',
+            name: 'â¬†ï¸Â Increase Lift Adjust: Green',
             description: 'Increase the value of Lift Adjust: Green',
             options: [
                 {
@@ -8343,7 +8333,7 @@ module.exports = function (self) {
         };
         // Action to decrement Lift Adjust: Green
         actions['set_lift_adjust_1_decrement'] = {
-            name: '⬇️ Decrease Lift Adjust: Green',
+            name: 'â¬‡ï¸Â Decrease Lift Adjust: Green',
             description: 'Decrease the value of Lift Adjust: Green',
             options: [
                 {
@@ -8395,7 +8385,7 @@ module.exports = function (self) {
         };
         // Action to reset Lift Adjust: Green al default value
         actions['set_lift_adjust_1_reset'] = {
-            name: '🔄 Reset Lift Adjust: Green',
+            name: 'ðŸ”„ Reset Lift Adjust: Green',
             description: 'Reset to default value (-2.00)',
             options: [
                 {
@@ -8478,7 +8468,7 @@ module.exports = function (self) {
         };
         // Action to increment Lift Adjust: Blue
         actions['set_lift_adjust_2_increment'] = {
-            name: '⬆️ Increase Lift Adjust: Blue',
+            name: 'â¬†ï¸Â Increase Lift Adjust: Blue',
             description: 'Increase the value of Lift Adjust: Blue',
             options: [
                 {
@@ -8530,7 +8520,7 @@ module.exports = function (self) {
         };
         // Action to decrement Lift Adjust: Blue
         actions['set_lift_adjust_2_decrement'] = {
-            name: '⬇️ Decrease Lift Adjust: Blue',
+            name: 'â¬‡ï¸Â Decrease Lift Adjust: Blue',
             description: 'Decrease the value of Lift Adjust: Blue',
             options: [
                 {
@@ -8582,7 +8572,7 @@ module.exports = function (self) {
         };
         // Action to reset Lift Adjust: Blue al default value
         actions['set_lift_adjust_2_reset'] = {
-            name: '🔄 Reset Lift Adjust: Blue',
+            name: 'ðŸ”„ Reset Lift Adjust: Blue',
             description: 'Reset to default value (-2.00)',
             options: [
                 {
@@ -8665,7 +8655,7 @@ module.exports = function (self) {
         };
         // Action to increment Lift Adjust: Luma
         actions['set_lift_adjust_3_increment'] = {
-            name: '⬆️ Increase Lift Adjust: Luma',
+            name: 'â¬†ï¸Â Increase Lift Adjust: Luma',
             description: 'Increase the value of Lift Adjust: Luma',
             options: [
                 {
@@ -8717,7 +8707,7 @@ module.exports = function (self) {
         };
         // Action to decrement Lift Adjust: Luma
         actions['set_lift_adjust_3_decrement'] = {
-            name: '⬇️ Decrease Lift Adjust: Luma',
+            name: 'â¬‡ï¸Â Decrease Lift Adjust: Luma',
             description: 'Decrease the value of Lift Adjust: Luma',
             options: [
                 {
@@ -8769,7 +8759,7 @@ module.exports = function (self) {
         };
         // Action to reset Lift Adjust: Luma al default value
         actions['set_lift_adjust_3_reset'] = {
-            name: '🔄 Reset Lift Adjust: Luma',
+            name: 'ðŸ”„ Reset Lift Adjust: Luma',
             description: 'Reset to default value (-2.00)',
             options: [
                 {
@@ -8920,7 +8910,7 @@ module.exports = function (self) {
         };
         // Action to increment Gamma Adjust: Red
         actions['set_gamma_adjust_0_increment'] = {
-            name: '⬆️ Increase Gamma Adjust: Red',
+            name: 'â¬†ï¸Â Increase Gamma Adjust: Red',
             description: 'Increase the value of Gamma Adjust: Red',
             options: [
                 {
@@ -8972,7 +8962,7 @@ module.exports = function (self) {
         };
         // Action to decrement Gamma Adjust: Red
         actions['set_gamma_adjust_0_decrement'] = {
-            name: '⬇️ Decrease Gamma Adjust: Red',
+            name: 'â¬‡ï¸Â Decrease Gamma Adjust: Red',
             description: 'Decrease the value of Gamma Adjust: Red',
             options: [
                 {
@@ -9024,7 +9014,7 @@ module.exports = function (self) {
         };
         // Action to reset Gamma Adjust: Red al default value
         actions['set_gamma_adjust_0_reset'] = {
-            name: '🔄 Reset Gamma Adjust: Red',
+            name: 'ðŸ”„ Reset Gamma Adjust: Red',
             description: 'Reset to default value (-4.00)',
             options: [
                 {
@@ -9107,7 +9097,7 @@ module.exports = function (self) {
         };
         // Action to increment Gamma Adjust: Green
         actions['set_gamma_adjust_1_increment'] = {
-            name: '⬆️ Increase Gamma Adjust: Green',
+            name: 'â¬†ï¸Â Increase Gamma Adjust: Green',
             description: 'Increase the value of Gamma Adjust: Green',
             options: [
                 {
@@ -9159,7 +9149,7 @@ module.exports = function (self) {
         };
         // Action to decrement Gamma Adjust: Green
         actions['set_gamma_adjust_1_decrement'] = {
-            name: '⬇️ Decrease Gamma Adjust: Green',
+            name: 'â¬‡ï¸Â Decrease Gamma Adjust: Green',
             description: 'Decrease the value of Gamma Adjust: Green',
             options: [
                 {
@@ -9211,7 +9201,7 @@ module.exports = function (self) {
         };
         // Action to reset Gamma Adjust: Green al default value
         actions['set_gamma_adjust_1_reset'] = {
-            name: '🔄 Reset Gamma Adjust: Green',
+            name: 'ðŸ”„ Reset Gamma Adjust: Green',
             description: 'Reset to default value (-4.00)',
             options: [
                 {
@@ -9294,7 +9284,7 @@ module.exports = function (self) {
         };
         // Action to increment Gamma Adjust: Blue
         actions['set_gamma_adjust_2_increment'] = {
-            name: '⬆️ Increase Gamma Adjust: Blue',
+            name: 'â¬†ï¸Â Increase Gamma Adjust: Blue',
             description: 'Increase the value of Gamma Adjust: Blue',
             options: [
                 {
@@ -9346,7 +9336,7 @@ module.exports = function (self) {
         };
         // Action to decrement Gamma Adjust: Blue
         actions['set_gamma_adjust_2_decrement'] = {
-            name: '⬇️ Decrease Gamma Adjust: Blue',
+            name: 'â¬‡ï¸Â Decrease Gamma Adjust: Blue',
             description: 'Decrease the value of Gamma Adjust: Blue',
             options: [
                 {
@@ -9398,7 +9388,7 @@ module.exports = function (self) {
         };
         // Action to reset Gamma Adjust: Blue al default value
         actions['set_gamma_adjust_2_reset'] = {
-            name: '🔄 Reset Gamma Adjust: Blue',
+            name: 'ðŸ”„ Reset Gamma Adjust: Blue',
             description: 'Reset to default value (-4.00)',
             options: [
                 {
@@ -9481,7 +9471,7 @@ module.exports = function (self) {
         };
         // Action to increment Gamma Adjust: Luma
         actions['set_gamma_adjust_3_increment'] = {
-            name: '⬆️ Increase Gamma Adjust: Luma',
+            name: 'â¬†ï¸Â Increase Gamma Adjust: Luma',
             description: 'Increase the value of Gamma Adjust: Luma',
             options: [
                 {
@@ -9533,7 +9523,7 @@ module.exports = function (self) {
         };
         // Action to decrement Gamma Adjust: Luma
         actions['set_gamma_adjust_3_decrement'] = {
-            name: '⬇️ Decrease Gamma Adjust: Luma',
+            name: 'â¬‡ï¸Â Decrease Gamma Adjust: Luma',
             description: 'Decrease the value of Gamma Adjust: Luma',
             options: [
                 {
@@ -9585,7 +9575,7 @@ module.exports = function (self) {
         };
         // Action to reset Gamma Adjust: Luma al default value
         actions['set_gamma_adjust_3_reset'] = {
-            name: '🔄 Reset Gamma Adjust: Luma',
+            name: 'ðŸ”„ Reset Gamma Adjust: Luma',
             description: 'Reset to default value (-4.00)',
             options: [
                 {
@@ -9736,7 +9726,7 @@ module.exports = function (self) {
         };
         // Action to increment Gain Adjust: Red
         actions['set_gain_adjust_0_increment'] = {
-            name: '⬆️ Increase Gain Adjust: Red',
+            name: 'â¬†ï¸Â Increase Gain Adjust: Red',
             description: 'Increase the value of Gain Adjust: Red',
             options: [
                 {
@@ -9788,7 +9778,7 @@ module.exports = function (self) {
         };
         // Action to decrement Gain Adjust: Red
         actions['set_gain_adjust_0_decrement'] = {
-            name: '⬇️ Decrease Gain Adjust: Red',
+            name: 'â¬‡ï¸Â Decrease Gain Adjust: Red',
             description: 'Decrease the value of Gain Adjust: Red',
             options: [
                 {
@@ -9840,7 +9830,7 @@ module.exports = function (self) {
         };
         // Action to reset Gain Adjust: Red al default value
         actions['set_gain_adjust_0_reset'] = {
-            name: '🔄 Reset Gain Adjust: Red',
+            name: 'ðŸ”„ Reset Gain Adjust: Red',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -9923,7 +9913,7 @@ module.exports = function (self) {
         };
         // Action to increment Gain Adjust: Green
         actions['set_gain_adjust_1_increment'] = {
-            name: '⬆️ Increase Gain Adjust: Green',
+            name: 'â¬†ï¸Â Increase Gain Adjust: Green',
             description: 'Increase the value of Gain Adjust: Green',
             options: [
                 {
@@ -9975,7 +9965,7 @@ module.exports = function (self) {
         };
         // Action to decrement Gain Adjust: Green
         actions['set_gain_adjust_1_decrement'] = {
-            name: '⬇️ Decrease Gain Adjust: Green',
+            name: 'â¬‡ï¸Â Decrease Gain Adjust: Green',
             description: 'Decrease the value of Gain Adjust: Green',
             options: [
                 {
@@ -10027,7 +10017,7 @@ module.exports = function (self) {
         };
         // Action to reset Gain Adjust: Green al default value
         actions['set_gain_adjust_1_reset'] = {
-            name: '🔄 Reset Gain Adjust: Green',
+            name: 'ðŸ”„ Reset Gain Adjust: Green',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -10110,7 +10100,7 @@ module.exports = function (self) {
         };
         // Action to increment Gain Adjust: Blue
         actions['set_gain_adjust_2_increment'] = {
-            name: '⬆️ Increase Gain Adjust: Blue',
+            name: 'â¬†ï¸Â Increase Gain Adjust: Blue',
             description: 'Increase the value of Gain Adjust: Blue',
             options: [
                 {
@@ -10162,7 +10152,7 @@ module.exports = function (self) {
         };
         // Action to decrement Gain Adjust: Blue
         actions['set_gain_adjust_2_decrement'] = {
-            name: '⬇️ Decrease Gain Adjust: Blue',
+            name: 'â¬‡ï¸Â Decrease Gain Adjust: Blue',
             description: 'Decrease the value of Gain Adjust: Blue',
             options: [
                 {
@@ -10214,7 +10204,7 @@ module.exports = function (self) {
         };
         // Action to reset Gain Adjust: Blue al default value
         actions['set_gain_adjust_2_reset'] = {
-            name: '🔄 Reset Gain Adjust: Blue',
+            name: 'ðŸ”„ Reset Gain Adjust: Blue',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -10297,7 +10287,7 @@ module.exports = function (self) {
         };
         // Action to increment Gain Adjust: Luma
         actions['set_gain_adjust_3_increment'] = {
-            name: '⬆️ Increase Gain Adjust: Luma',
+            name: 'â¬†ï¸Â Increase Gain Adjust: Luma',
             description: 'Increase the value of Gain Adjust: Luma',
             options: [
                 {
@@ -10349,7 +10339,7 @@ module.exports = function (self) {
         };
         // Action to decrement Gain Adjust: Luma
         actions['set_gain_adjust_3_decrement'] = {
-            name: '⬇️ Decrease Gain Adjust: Luma',
+            name: 'â¬‡ï¸Â Decrease Gain Adjust: Luma',
             description: 'Decrease the value of Gain Adjust: Luma',
             options: [
                 {
@@ -10401,7 +10391,7 @@ module.exports = function (self) {
         };
         // Action to reset Gain Adjust: Luma al default value
         actions['set_gain_adjust_3_reset'] = {
-            name: '🔄 Reset Gain Adjust: Luma',
+            name: 'ðŸ”„ Reset Gain Adjust: Luma',
             description: 'Reset to default value (1.00)',
             options: [
                 {
@@ -10552,7 +10542,7 @@ module.exports = function (self) {
         };
         // Action to increment Offset Adjust: Red
         actions['set_offset_adjust_0_increment'] = {
-            name: '⬆️ Increase Offset Adjust: Red',
+            name: 'â¬†ï¸Â Increase Offset Adjust: Red',
             description: 'Increase the value of Offset Adjust: Red',
             options: [
                 {
@@ -10604,7 +10594,7 @@ module.exports = function (self) {
         };
         // Action to decrement Offset Adjust: Red
         actions['set_offset_adjust_0_decrement'] = {
-            name: '⬇️ Decrease Offset Adjust: Red',
+            name: 'â¬‡ï¸Â Decrease Offset Adjust: Red',
             description: 'Decrease the value of Offset Adjust: Red',
             options: [
                 {
@@ -10656,7 +10646,7 @@ module.exports = function (self) {
         };
         // Action to reset Offset Adjust: Red al default value
         actions['set_offset_adjust_0_reset'] = {
-            name: '🔄 Reset Offset Adjust: Red',
+            name: 'ðŸ”„ Reset Offset Adjust: Red',
             description: 'Reset to default value (-8.00)',
             options: [
                 {
@@ -10739,7 +10729,7 @@ module.exports = function (self) {
         };
         // Action to increment Offset Adjust: Green
         actions['set_offset_adjust_1_increment'] = {
-            name: '⬆️ Increase Offset Adjust: Green',
+            name: 'â¬†ï¸Â Increase Offset Adjust: Green',
             description: 'Increase the value of Offset Adjust: Green',
             options: [
                 {
@@ -10791,7 +10781,7 @@ module.exports = function (self) {
         };
         // Action to decrement Offset Adjust: Green
         actions['set_offset_adjust_1_decrement'] = {
-            name: '⬇️ Decrease Offset Adjust: Green',
+            name: 'â¬‡ï¸Â Decrease Offset Adjust: Green',
             description: 'Decrease the value of Offset Adjust: Green',
             options: [
                 {
@@ -10843,7 +10833,7 @@ module.exports = function (self) {
         };
         // Action to reset Offset Adjust: Green al default value
         actions['set_offset_adjust_1_reset'] = {
-            name: '🔄 Reset Offset Adjust: Green',
+            name: 'ðŸ”„ Reset Offset Adjust: Green',
             description: 'Reset to default value (-8.00)',
             options: [
                 {
@@ -10926,7 +10916,7 @@ module.exports = function (self) {
         };
         // Action to increment Offset Adjust: Blue
         actions['set_offset_adjust_2_increment'] = {
-            name: '⬆️ Increase Offset Adjust: Blue',
+            name: 'â¬†ï¸Â Increase Offset Adjust: Blue',
             description: 'Increase the value of Offset Adjust: Blue',
             options: [
                 {
@@ -10978,7 +10968,7 @@ module.exports = function (self) {
         };
         // Action to decrement Offset Adjust: Blue
         actions['set_offset_adjust_2_decrement'] = {
-            name: '⬇️ Decrease Offset Adjust: Blue',
+            name: 'â¬‡ï¸Â Decrease Offset Adjust: Blue',
             description: 'Decrease the value of Offset Adjust: Blue',
             options: [
                 {
@@ -11030,7 +11020,7 @@ module.exports = function (self) {
         };
         // Action to reset Offset Adjust: Blue al default value
         actions['set_offset_adjust_2_reset'] = {
-            name: '🔄 Reset Offset Adjust: Blue',
+            name: 'ðŸ”„ Reset Offset Adjust: Blue',
             description: 'Reset to default value (-8.00)',
             options: [
                 {
@@ -11113,7 +11103,7 @@ module.exports = function (self) {
         };
         // Action to increment Offset Adjust: Luma
         actions['set_offset_adjust_3_increment'] = {
-            name: '⬆️ Increase Offset Adjust: Luma',
+            name: 'â¬†ï¸Â Increase Offset Adjust: Luma',
             description: 'Increase the value of Offset Adjust: Luma',
             options: [
                 {
@@ -11165,7 +11155,7 @@ module.exports = function (self) {
         };
         // Action to decrement Offset Adjust: Luma
         actions['set_offset_adjust_3_decrement'] = {
-            name: '⬇️ Decrease Offset Adjust: Luma',
+            name: 'â¬‡ï¸Â Decrease Offset Adjust: Luma',
             description: 'Decrease the value of Offset Adjust: Luma',
             options: [
                 {
@@ -11217,7 +11207,7 @@ module.exports = function (self) {
         };
         // Action to reset Offset Adjust: Luma al default value
         actions['set_offset_adjust_3_reset'] = {
-            name: '🔄 Reset Offset Adjust: Luma',
+            name: 'ðŸ”„ Reset Offset Adjust: Luma',
             description: 'Reset to default value (-8.00)',
             options: [
                 {
@@ -11282,7 +11272,7 @@ module.exports = function (self) {
         };
         // Action to increment Luma mix
         actions['set_luma_mix_increment'] = {
-            name: '⬆️ Increase Luma mix',
+            name: 'â¬†ï¸Â Increase Luma mix',
             description: 'Increase the value of Luma mix',
             options: [
                 {
@@ -11322,7 +11312,7 @@ module.exports = function (self) {
         };
         // Action to decrement Luma mix
         actions['set_luma_mix_decrement'] = {
-            name: '⬇️ Decrease Luma mix',
+            name: 'â¬‡ï¸Â Decrease Luma mix',
             description: 'Decrease the value of Luma mix',
             options: [
                 {
@@ -11362,7 +11352,7 @@ module.exports = function (self) {
         };
         // Action to reset Luma mix al default value
         actions['set_luma_mix_reset'] = {
-            name: '🔄 Reset Luma mix',
+            name: 'ðŸ”„ Reset Luma mix',
             description: 'Reset to default value (1.00)',
             options: [
                 {
